@@ -1,0 +1,59 @@
+package com.example.bigdeal;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+
+
+public class DealerDeal extends Activity{
+                
+                
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dealer_deal);
+    /* final Intent in1=new Intent(this, postDeals.class);*/
+     final Intent in2=new Intent(this, viewPastDeals.class);
+        
+        final ImageButton imageButton1=(ImageButton)findViewById(R.id.imageButton1);
+       final  ImageButton imageButton2=(ImageButton)findViewById(R.id.imageButton2);
+        
+        
+        imageButton1.setOnClickListener(new OnClickListener() {
+                                                
+                                                @Override
+                                                public void onClick(View arg0) 
+                                                {
+                                                                // TODO Auto-generated method stub
+                                                	Bundle bundle=getIntent().getExtras();
+                                                    String uname = bundle.getString("username");
+                                                    Intent in1=new Intent(getApplicationContext(), postDeals.class);
+                                                    in1.putExtra("username", uname);
+                                                    startActivity(in1);
+                                                }
+                                });
+        
+ imageButton2.setOnClickListener(new OnClickListener() {
+                                                
+                                                @Override
+                                                public void onClick(View arg0) {
+                                                                // TODO Auto-generated method stub
+                                                	Bundle bundle=getIntent().getExtras();
+                                                	 String uname = bundle.getString("username");
+                                                     
+                                                     in2.putExtra("username", uname);
+                                                                startActivity(in2);
+                                                }
+                                });
+    }
+    
+    @Override
+    public void onBackPressed() {
+            super.onBackPressed();
+            this.finish();
+    }
+}

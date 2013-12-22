@@ -1,0 +1,141 @@
+package com.example.bigdeal;
+
+import java.util.Calendar;
+
+import android.app.Service;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
+
+public class ExpiryChecker  extends Service 
+{		
+	public static final String BROADCAST_ACTION = "com.websmithing.broadcasttest.displayevent";	
+	private final Handler handler = new Handler();
+	MSdatabase database;
+	Intent intent;	
+	int counter = 0;	
+	
+	@Override	
+	public void onCreate() 
+	{		
+		super.onCreate();    	
+		intent = new Intent(BROADCAST_ACTION);		
+	}    
+	
+	@Override    
+	public void onStart(Intent intent, int startId) 
+	{        
+		handler.removeCallbacks(sendUpdatesToUI);        
+		handler.postDelayed(sendUpdatesToUI, 1000); // 1 second       
+	}    
+	
+	private Runnable sendUpdatesToUI = new Runnable() 
+	{    	
+		public void run() 
+		{    		
+			check_expiry();    		    	   
+			handler.postDelayed(this, 10000); // 10 seconds    	
+		}    
+	};            
+	
+	
+	private void check_expiry() 
+	{    	
+		/*Log.d(TAG, "entered DisplayLoggingInfo");    	
+		intent.putExtra("time", new Date().toLocaleString());    	
+		intent.putExtra("counter", String.valueOf(++counter));*/
+		database=new MSdatabase(getApplicationContext());
+		Calendar today=Calendar.getInstance();
+    	
+    	//Toast.makeText(getApplicationContext(), "timer started", Toast.LENGTH_LONG).show(); 
+    	Log.d("TIMER", "Timer ON");
+    	
+    	database.open();
+    	Cursor allEntries=database.dealinfo_getAllEntriesforservice();
+    	System.out.println(allEntries.getCount());
+    	database.close();
+    	//allEntries.moveToFirst();
+    	
+    	if(allEntries.moveToFirst())
+    	{
+    		do
+    		{
+    			String fromDate=allEntries.getString(5);
+        		String fromTime=allEntries.getString(7);
+        		
+        		String[] from_dates=fromDate.split("-");
+        		String[] from_time=fromTime.split("-");
+        		
+        		Calendar from=Calendar.getInstance();
+        		//set takes year,month,date,hour,min,sec as parameter
+        		from.set(Integer.parseInt(from_dates[2]), Integer.parseInt(from_dates[1]), Integer.parseInt(from_dates[0]), Integer.parseInt(from_time[0]), Integer.parseInt(from_time[1]), Integer.parseInt(from_time[2]));
+        	
+        		String toDate=allEntries.getString(6);
+        		String toTime=allEntries.getString(8);
+        		
+        		String[] to_dates=toDate.split("-");
+        		String[] to_time=toTime.split("-");
+        		
+        		Calendar to=Calendar.getInstance();
+        		//set takes year,month,date,hour,min,sec as parameter
+        		to.set(Integer.parseInt(to_dates[2]), Integer.parseInt(to_dates[1]), Integer.parseInt(to_dates[0]), Integer.parseInt(to_time[0]), Integer.parseInt(to_time[1]), Integer.parseInt(to_time[2]));
+        	
+        		
+        		int id=allEntries.getInt(0);
+    			DealInfo dealinfo=new DealInfo();
+    			dealinfo.setKey_Id2(id);
+        		
+    			Log.i("dates", "\nfrom date: "+from.getTime()+ "\nto date: "+to.getTime()+ "\ntoday date: "+today.getTime());
+    			
+        		if(from.after(today))
+        		{
+        			System.out.println("inside Inactive");
+        			dealinfo.setStatus("Inactive");
+        			
+        		}
+        		else
+        			if(to.before(today))
+        			{
+        				System.out.println("inside Expired");
+        				dealinfo.setStatus("Expired");
+        				
+        			}
+        			else
+        				if((from.before(today) || from.equals(today)) && (to.after(today) || from.equals(today)))
+        				{
+        					System.out.println("inside Active");
+        					dealinfo.setStatus("Active");
+        					
+        				}
+        		database.open();
+        		database.dealinfo_updatestatus(dealinfo);
+        		database.close();
+        		
+        		
+    		}
+    		while(allEntries.moveToNext());
+    	}
+    	
+		
+		sendBroadcast(intent);    
+		
+	}	
+	
+	@Override	public IBinder onBind(Intent intent) 
+	{		
+		return null;	
+		
+	}	@Override	
+	
+	public void onDestroy() 
+	{		        
+		handler.removeCallbacks(sendUpdatesToUI);				
+		super.onDestroy();
+		//Toast.makeText(getApplicationContext(), "timer stopped", Toast.LENGTH_SHORT).show(); 
+    	Log.d("TIMER", "Timer OFF");
+	}		
+	
+}
+

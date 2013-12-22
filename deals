@@ -1,0 +1,454 @@
+package com.example.bigdeal;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.SearchManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.TextView;
+
+public class deals extends Activity 
+{
+    //private String[] mThumbIds={"40% off", "Buy 1 Get 1 free","60% off", "Buy 2 Get 1 free","20% off", "Buy 2 Get 3 free","10% off", "Buy 2 Get 2 free"};
+	//public static int nooflikes[]={0,1,2,3,1,0,0,0,5}; //change  
+	Intent intent2;
+	private MSdatabase database;
+	private static String city_selected;
+	private static String cat_selected;
+	private static String city_selected_temp;
+	private static String cat_selected_temp;
+	String[] info;
+	String[] brand;
+	String[] brandinfo;
+	String popularity_clicked;
+	
+	//new
+	String[] address;
+	String[] shopname;
+	Integer[] likes;
+	String[] from;
+	String[] till;
+	String brand_to_select;
+	//------------------
+	
+    public void onCreate(Bundle savedInstanceState)
+    {
+    	
+    	super.onCreate(savedInstanceState);
+ 	    setContentView(R.layout.activity_deals);
+
+    	
+    	bundle = getIntent().getExtras();
+    	String flag=bundle.getString("deal_flag");
+    	
+    	if(flag!=null && flag.equals("from_userHome"))
+    	{
+    		city_selected = bundle.getString("city");
+        	cat_selected = bundle.getString("category");
+        	
+        	System.out.println("Inside onCreate : city= "+city_selected);
+        	
+        	city_selected_temp=city_selected ;
+        	cat_selected_temp=cat_selected;
+    	}
+    	else
+    	{
+    		city_selected=city_selected_temp;
+    		cat_selected=cat_selected_temp;
+    	}
+		
+    	
+    	intent2 = new Intent(deals.this,ExpiryChecker.class);
+    	startService(intent2);
+	   
+    	
+    	/***************************search box***************************/
+        
+    	 setDefaultKeyMode(DEFAULT_KEYS_SEARCH_LOCAL);
+        
+        Intent intent = getIntent();
+         if (Intent.ACTION_SEARCH.equals(intent.getAction())) 
+         {
+           String query = intent.getStringExtra(SearchManager.QUERY);
+       
+           brand_to_select=query.toUpperCase();
+           
+           System.out.println("city in search : "+city_selected);
+           //new_Omkar-------------------------------------------------
+           /*
+           Intent intent_startService=new Intent(getApplicationContext(),ExpiryChecker.class);
+           startService(intent_startService);*/
+           
+           //----------------------------------------------------------
+           updateUI(intent);
+         }
+
+        /*ImageButton search=(ImageButton)findViewById(R.id.imageButton1);
+        
+        search.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				onSearchRequested();
+			}
+		});*/
+        
+        
+        
+        
+        
+        
+        
+        /**************************************/
+
+
+	    
+	} 
+/*    private void doMySearch(String query) {
+        // TODO Auto-generated method stub
+           brand_to_select=query;
+           Log.d("search", query);
+           updateUI();
+  }*/
+
+	private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() 
+	{       
+		@Override       
+		public void onReceive(Context context, Intent intent) 
+		{        	
+			updateUI(intent);         
+			
+		}    
+		
+	};
+	private Bundle bundle;
+	private SimpleDateFormat dateFormatter;
+	private Cursor dealsForGridView;
+	        	
+	
+	@Override	
+	public void onResume()
+	{		
+		super.onResume();
+		
+		 //new_Omkar-------------------------------------------------
+		/*bundle = getIntent().getExtras();
+		city_selected = bundle.getString("city");
+    	cat_selected = bundle.getString("category");
+    	
+    	System.out.println("Inside onResume : city= "+city_selected);*/
+    	//------------------------------------------------------------
+    	
+    	/*city_selected_temp=city_selected ;
+    	cat_selected_temp=cat_selected;*/
+		
+		startService(intent2);
+		registerReceiver(broadcastReceiver, new IntentFilter(ExpiryChecker.BROADCAST_ACTION));	
+		
+	}	
+	
+	@Override
+	protected void onRestart() 
+	{
+		// TODO Auto-generated method stub
+		super.onRestart();
+		
+		 //new_Omkar-------------------------------------------------
+		/*bundle = getIntent().getExtras();
+		city_selected = bundle.getString("city");
+    	cat_selected = bundle.getString("category");
+    	
+    	System.out.println("Inside onRestart : city= "+city_selected);*/
+    	//------------------------------------------------------------
+    	
+    	/*city_selected_temp=city_selected ;
+    	cat_selected_temp=cat_selected;*/
+		
+		startService(intent2);
+		registerReceiver(broadcastReceiver, new IntentFilter(ExpiryChecker.BROADCAST_ACTION));
+	}
+	
+	@Override	
+	public void onPause()
+	{		
+		super.onPause();
+		unregisterReceiver(broadcastReceiver);	
+		stopService(intent2);		
+		
+	}	   
+	
+	@SuppressWarnings("deprecation")
+	private void updateUI(Intent intent)
+	{    
+		
+    	
+    	Log.i("search", "city = "+city_selected);
+    	Log.i("search", "cat = "+cat_selected);
+    	Log.i("search", "search = "+brand_to_select);
+    	
+    	database=new MSdatabase(getApplicationContext());
+		if(popularity_clicked!=null && popularity_clicked.equalsIgnoreCase("yes"))
+		{
+			database.open();
+			dealsForGridView = database.dealinfo_getEntry_sort(city_selected, cat_selected, "Active", brand_to_select);
+		}
+		else
+		{
+			database.open();
+			dealsForGridView = database.dealinfo_getEntry(city_selected, cat_selected, "Active", brand_to_select);
+		}
+    	
+    	
+    	
+		
+		/*Log.i("data", dealsForGridView.getCount()+"");*/
+		/*****************updating the gridview*******************/
+		GridView gridview = (GridView) findViewById(R.id.gridview);
+	       
+        	if (dealsForGridView.getCount()!=0) 
+        	{
+				if (dealsForGridView.moveToFirst()) {
+					info = new String[dealsForGridView.getCount()];
+					brand = new String[dealsForGridView.getCount()];
+					brandinfo = new String[dealsForGridView.getCount()];
+					
+					//new
+	     	        shopname = new String[dealsForGridView.getCount()];
+	     	        address = new String[dealsForGridView.getCount()];
+	     	        likes = new Integer[dealsForGridView.getCount()];
+	     	        from = new String[dealsForGridView.getCount()];
+	     	        till = new String[dealsForGridView.getCount()];
+	     	        //----------------
+
+
+					int i = 0;
+					do {
+						info[i] = dealsForGridView.getString(3);
+						brand[i] = dealsForGridView.getString(2);
+						
+						//new
+	        			shopname[i] = dealsForGridView.getString(0);
+	        			address[i] = dealsForGridView.getString(9);
+	        			likes[i] = dealsForGridView.getInt(10);
+	        			//------------
+	        			
+	        			
+	        			//-----------------
+	        			String fd = dealsForGridView.getString(4);
+	        			String[] fd_split=fd.split("-");
+	        			/*int from_month=Integer.parseInt(fd_split[1])+1;
+	        			String from_date=fd_split[0]+"-"+from_month+"-"+fd_split[2];*/
+	        			String ft=dealsForGridView.getString(6);
+	        			String[] ft_split=ft.split("-");
+	        			
+	        			String td = dealsForGridView.getString(5);
+	        			String[] td_split=td.split("-");
+	        			/*int to_month=Integer.parseInt(td_split[1])+1;
+	        			String to_date=td_split[0]+"-"+to_month+"-"+td_split[2];*/
+	        			String tt=dealsForGridView.getString(7);
+	        			String[] tt_split=tt.split("-");
+	        			
+
+	        			//new_Omkar--------------------------------
+	        			
+	        			dateFormatter = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' hh:mm:ss a");
+	        			Date from_formatted=new Date(Integer.parseInt(fd_split[2])-1900,Integer.parseInt(fd_split[1]),Integer.parseInt(fd_split[0]),Integer.parseInt(ft_split[0]),Integer.parseInt(ft_split[1]),Integer.parseInt(ft_split[2]));
+	        			from[i]=dateFormatter.format(from_formatted);
+	        			
+	        			Date to_formatted=new Date(Integer.parseInt(td_split[2])-1900,Integer.parseInt(td_split[1]),Integer.parseInt(td_split[0]),Integer.parseInt(tt_split[0]),Integer.parseInt(tt_split[1]),Integer.parseInt(tt_split[2]));
+	        			till[i]=dateFormatter.format(to_formatted);
+	        			//-----------------------------------------
+	        			
+	        			
+						brandinfo[i] = brand[i] + " : \n" + info[i];
+						i++;
+
+					} while (dealsForGridView.moveToNext());
+				}
+				gridview.setAdapter(new MyAdapter(getApplicationContext()));
+				final ArrayAdapter<String> adap = new ArrayAdapter<String>(
+						this, 0, info);
+				final ArrayAdapter<String> adap1 = new ArrayAdapter<String>(
+						this, 0, brand);
+				
+				 //new
+		        final ArrayAdapter<String> adap2 = new ArrayAdapter<String>(this, 0, shopname);
+		        final ArrayAdapter<String> adap3 = new ArrayAdapter<String>(this, 0, address);
+		        final ArrayAdapter<Integer> adap4 = new ArrayAdapter<Integer>(this, 0, likes);
+		        final ArrayAdapter<String> adap5 = new ArrayAdapter<String>(this, 0, from);
+		        final ArrayAdapter<String> adap6 = new ArrayAdapter<String>(this, 0, till);
+		        //---------------
+
+				
+				gridview.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View v,
+							int position, long id) {
+						Intent intent = new Intent(deals.this,
+								DealInfoActivity.class);
+						intent.putExtra("descr", adap.getItem(position));
+						intent.putExtra("brand", adap1.getItem(position));
+						
+						//new
+						intent.putExtra("shopname", adap2.getItem(position));
+						intent.putExtra("address", adap3.getItem(position));
+						intent.putExtra("nooflikes", adap4.getItem(position));
+						intent.putExtra("from", adap5.getItem(position));
+						intent.putExtra("till", adap6.getItem(position));
+						//------------------
+
+						
+						startActivity(intent);
+					}
+
+				});
+				database.close();
+			}
+        	else
+        	{
+        		
+        		/*TextView textView=new TextView(getApplicationContext());
+        		textView.setText("No deals found as per your requirements !!!");
+        		gridview.addView(textView);*/
+        		
+        		AlertDialog alertDialog=new AlertDialog.Builder(this).create();
+
+                alertDialog.setTitle("NO DEALS");
+                alertDialog.setMessage("No deals found as per your requirements !!!");
+                
+                alertDialog.setButton("Keep Searching", new DialogInterface.OnClickListener() {
+        			
+        			@Override
+        			public void onClick(DialogInterface arg0, int arg1) {
+        				// TODO Auto-generated method stub
+        				Intent intent = new Intent(getApplicationContext(),userHome.class);
+        				startActivity(intent);
+        				finish();
+        			}
+
+        		});
+                
+                
+                alertDialog.show();
+        	}
+	
+}
+
+
+private class MyAdapter extends BaseAdapter 
+{
+private Context mContext;
+
+public MyAdapter(Context c) {
+    mContext = c;
+}
+
+public int getCount() {
+    return brandinfo.length;
+}
+
+public Object getItem(int position) {
+    return null;
+}
+
+public long getItemId(int position) {
+    return 0;
+}
+
+// create a new ImageView for each item referenced by the Adapter
+public View getView(int position, View convertView, ViewGroup parent) 
+{
+   TextView txtView;
+    
+//    View view;
+   txtView = new TextView(mContext);
+    
+    
+    if (convertView == null) 
+    {  
+    	// if it's not recycled, initialize some attributes
+        txtView = new TextView(mContext);
+        txtView.setLayoutParams(new GridView.LayoutParams(150,150));
+        txtView.setPadding(10, 10, 10, 10);          
+    } 
+    
+    else 
+    {
+        txtView = (TextView) convertView;
+    }
+    
+    
+    if(position%2==0)
+        txtView.setBackgroundColor(Color.parseColor("#3F9BBF"));
+    else
+        txtView.setBackgroundColor(Color.parseColor("#FF5050"));
+
+            
+    int r = (int) (Math.random()*255);
+	int g = (int) (Math.random()*255);
+	int b = (int) (Math.random()*255);
+	
+	txtView.setText(brandinfo[position]);
+	txtView.setTextSize(15);
+	txtView.setTextAppearance(mContext, 20);
+	//txtView.setBackgroundColor(Color.rgb(r,g,b));
+	
+    return txtView; 	    
+}
+}   
+
+
+//new
+@Override
+public boolean onCreateOptionsMenu(Menu menu)    
+{      
+	MenuInflater inflater = getMenuInflater();     
+	inflater.inflate(R.menu.activity_deals, menu);
+	
+	return true; 
+}
+
+public boolean onOptionsItemSelected(MenuItem item)
+{           
+	switch (item.getItemId())     
+	{       
+	case R.id.search:
+		{
+			onSearchRequested();
+			return true;
+		}
+	
+	case R.id.popularity:
+		{
+			popularity_clicked="yes";
+			//not sure about the method call
+			updateUI(new Intent());
+			return true;
+		}
+	
+	default:return false;
+	}
+}
+
+}

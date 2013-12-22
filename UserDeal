@@ -1,0 +1,22 @@
+package com.example.bigdeal;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Menu;
+
+public class UserDeal extends Activity {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_deal);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_user_deal, menu);
+        return true;
+    }
+
+    
+}

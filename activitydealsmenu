@@ -1,0 +1,4 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"> 
+    <item android:id="@+id/search" android:title="Search a Brand" android:icon="@drawable/search_icon_trans"></item>
+    <item android:id="@+id/popularity" android:title="Sort Deals by Popularity" android:icon="@drawable/popularity_trans"></item>
+</menu>

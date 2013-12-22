@@ -1,0 +1,142 @@
+package com.example.bigdeal;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.AlertDialog;
+import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+  
+public class viewPastDeals extends ListActivity { 
+	MSdatabase database;
+	String desc[];
+	String brand[];
+	String cat[];
+	String concat[];
+	int id[];
+	List<String> exp_dealinfo=new ArrayList<String>();
+    @SuppressWarnings("deprecation")
+	@Override
+    public void onCreate(Bundle savedInstanceState) { 
+        super.onCreate(savedInstanceState); 
+ 
+        // storing string resources into Array 
+        //final String[] category = getResources().getStringArray(R.array.Category); 
+  
+        /*ListView listView=(ListView) findViewById(R.id.listView1);*/
+        
+        
+        Bundle extra=getIntent().getExtras();
+        final String uname=extra.getString("username");
+        database=new MSdatabase(getApplicationContext());
+        database.open();
+        Cursor c=database.dealinfo_getShopName(uname);
+        database.close();
+        String shop=c.getString(0);
+        database.open();
+        Cursor c1=database.dealinfo_viewpastdeals(shop, "Expired");
+        database.close();
+        System.out.println("expired deals = "+c1.getCount());
+        if(c1.getCount()!=0)
+        {
+        	if(c1.moveToFirst()){
+        		desc=new String[c1.getCount()];
+        		brand=new String[c1.getCount()];
+        		cat=new String[c1.getCount()];
+        		concat=new String[c1.getCount()];
+        		id=new int[c1.getCount()];
+        		int i=0;
+        		do{
+        			desc[i]=c1.getString(4);
+        			brand[i]=c1.getString(3);
+        			cat[i]=c1.getString(2);
+        			id[i]=c1.getInt(0);
+        			concat[i]=brand[i]+" : "+desc[i];
+        			exp_dealinfo.add(brand[i]+" : "+desc[i]);
+        			i++;
+        		}
+        		while(c1.moveToNext());
+        	}
+        	
+        	//System.out.println(concat[0] +" : "+concat[1] +" : "+concat[2] +" : ");
+        	 // Binding resources Array to ListAdapter 
+        	//String[] adobe_products = getResources().getStringArray(R.array.Category); 
+        	
+        	
+          this.setListAdapter(new ArrayAdapter<String>(this, R.layout.activity_view_past_deals,R.id.textView1, concat));
+            
+        	/*ArrayAdapter<String> arrayAdapter =      
+                new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, concat);
+                listView.setAdapter(arrayAdapter); */
+
+           getListView().setOnItemClickListener(new OnItemClickListener() {
+            	
+       
+
+    		@Override
+    		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+    				long arg3) {
+    			// TODO Auto-generated method stub
+    			
+    			String pass=desc[arg2];
+    			String pass1=brand[arg2];
+    			String pass2=cat[arg2];
+    			int pass3=id[arg2];
+    			Log.i("check", "Id to be updated is : "+pass3);
+    			Intent showContent = new Intent(getApplicationContext(),
+                        postDeals.class);
+                showContent.putExtra("desc", pass);
+                showContent.putExtra("brand", pass1);
+                showContent.putExtra("category", pass2);
+                showContent.putExtra("id", pass3);
+                showContent.putExtra("username", uname);
+                showContent.putExtra("flag", "viewpastdeal");
+                startActivity(showContent);
+               
+    		}
+            });
+        	
+        	
+        	
+        }
+        
+        else
+        {
+        	AlertDialog alertDialog=new AlertDialog.Builder(this).create();
+
+            alertDialog.setTitle("NO DEALS");
+            alertDialog.setMessage("Currently you have no expired deals to update !!!");
+            
+            alertDialog.setButton("Click here to post a new deal", new DialogInterface.OnClickListener() {
+    			
+    			@Override
+    			public void onClick(DialogInterface arg0, int arg1) {
+    				// TODO Auto-generated method stub
+    				Intent intent = new Intent(getApplicationContext(),postDeals.class);
+    				intent.putExtra("username", uname);
+    				startActivity(intent);
+    				finish();
+    			}
+
+    		});
+            
+            
+            alertDialog.show();
+        }
+        
+       
+        
+
+    }
+}
+  
+   

@@ -1,0 +1,330 @@
+package com.example.bigdeal;
+
+import java.util.Calendar;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+public class postDeals extends Activity 
+{
+	EditText brand;
+	EditText desc;
+	DatePicker fromdate;
+	DatePicker todate;
+	TimePicker fromtime;
+	TimePicker totime;
+	DealInfo dealInfo;
+	EditText category;
+	String uname, shopname;
+	String toDate;
+	String fromDate;
+	String ftime;
+	String ttime;
+
+
+
+	private MSdatabase database;
+	private String flag1;
+	private int id_selected;
+	 
+	 
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_post_deals);
+        brand=(EditText)findViewById(R.id.editText1);
+
+        //new
+        //category = (EditText)findViewById(R.id.editText3);
+        //------------
+
+        desc=(EditText)findViewById(R.id.editText2);
+        fromdate=(DatePicker)findViewById(R.id.datePicker1);
+        todate=(DatePicker)findViewById(R.id.datePicker2);
+        fromtime=(TimePicker)findViewById(R.id.timePicker1);
+        totime=(TimePicker)findViewById(R.id.timePicker2);
+        final Spinner cat=(Spinner)findViewById(R.id.spinner1);
+        Bundle bundle=getIntent().getExtras();
+        uname = bundle.getString("username");
+
+        //new
+        ArrayAdapter<CharSequence> adapter =ArrayAdapter.createFromResource(this, R.array.Category, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        cat.setAdapter(adapter);
+
+        flag1 = bundle.getString("flag");
+        id_selected=bundle.getInt("id");
+        
+        if (flag1!=null) 
+        {
+			if (flag1.equals("viewpastdeal")) {
+				brand.setEnabled(false);
+				desc.setEnabled(false);
+				brand.setText(bundle.getString("brand"));
+				desc.setText(bundle.getString("desc"));
+
+				String selected_cat = bundle.getString("category");
+				Log.i("check", selected_cat + "");
+				final String[] cat_res = getResources().getStringArray(
+						R.array.Category);
+				Log.i("check", cat_res.length + "");
+				int i = 0;
+				for (i = 0; i < cat_res.length; i++) {
+					if (cat_res[i].equalsIgnoreCase(selected_cat)) {
+						System.out.println("inside category selected found");
+						break;
+					}
+				}
+				cat.setSelection(i);
+				cat.setEnabled(false);
+
+			}
+		}
+		Button post=(Button)findViewById(R.id.button1);
+        
+        
+        
+        post.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) 
+			{
+				int counter=0;
+				// TODO Auto-generated method stub
+				if(brand.getText().toString().length()==0)
+				{
+					Toast.makeText(getApplicationContext(), "Please enter a brand name !!", Toast.LENGTH_LONG).show();
+					counter++;
+				}
+				else
+					if(desc.getText().toString().length()==0)
+					{
+						Toast.makeText(getApplicationContext(), "Please enter a description for your deal !!", Toast.LENGTH_LONG).show();
+						counter++;
+					}
+					else
+					{
+						//Datepicker logic here
+						Calendar today=Calendar.getInstance();
+						
+						Calendar from=Calendar.getInstance();
+						from.set(fromdate.getYear(), fromdate.getMonth(), fromdate.getDayOfMonth(), fromtime.getCurrentHour(), fromtime.getCurrentMinute(),0);
+						//Toast.makeText(getApplicationContext(), from.getTime().toLocaleString(), Toast.LENGTH_LONG).show();
+						Calendar to=Calendar.getInstance();
+						to.set(todate.getYear(), todate.getMonth(), todate.getDayOfMonth(), totime.getCurrentHour(), totime.getCurrentMinute(),0);
+						
+						if(from.before(today))
+						{
+							Toast.makeText(getApplicationContext(), "The Deal cannot begin before today!!", Toast.LENGTH_LONG).show();
+							counter++;
+						}
+						else
+							if(to.before(from))
+							{
+								Toast.makeText(getApplicationContext(), "Please enter a valid end date for the deal !!", Toast.LENGTH_LONG).show();
+								counter++;
+							}
+					}
+				
+				if(counter==0)
+				{
+					fromDate=fromdate.getDayOfMonth()+"-"+fromdate.getMonth()+"-"+fromdate.getYear();
+
+			        toDate=todate.getDayOfMonth()+"-"+todate.getMonth()+"-"+todate.getYear();
+			        Log.i("post", "month in picker is: "+fromdate.getMonth());
+			        Log.i("post", "toDate: "+toDate);
+
+			        //new
+			        Integer i = fromtime.getCurrentHour();
+			        Integer j = fromtime.getCurrentMinute();
+
+			        Integer k = totime.getCurrentHour();
+			        Integer l = totime.getCurrentMinute();
+
+			        ftime = i.toString() + "-" + j.toString()+"-00";
+			        ttime = k.toString() + "-" + l.toString()+"-00";
+			        //-----------------
+			        database=new MSdatabase(getApplicationContext());
+			    if(flag1!=null)
+			    {
+			    	if(flag1.equals("viewpastdeal"))
+				    {
+				    	dealInfo=new DealInfo();
+				    	dealInfo.setKey_Id2(id_selected);
+				    	dealInfo.setFromDate(fromDate);
+						dealInfo.setToDate(toDate);
+						dealInfo.setFromTime(ftime);
+						dealInfo.setToTime(ttime);
+
+
+						//--------------------------------------------------------------------------------------------------------------------------
+						
+						String[] from_dates=fromDate.split("-");
+		        		String[] from_time=ftime.split("-");
+		        		
+		        		Calendar from=Calendar.getInstance();
+		        		//set takes year,month,date,hour,min,sec as parameter
+		        		from.set(Integer.parseInt(from_dates[2]), Integer.parseInt(from_dates[1]), Integer.parseInt(from_dates[0]), Integer.parseInt(from_time[0]), Integer.parseInt(from_time[1]), Integer.parseInt(from_time[2]));
+		        	
+		        		String[] to_dates=toDate.split("-");
+		        		String[] to_time=ttime.split("-");
+		        		
+		        		Calendar to=Calendar.getInstance();
+		        		//set takes year,month,date,hour,min,sec as parameter
+		        		to.set(Integer.parseInt(to_dates[2]), Integer.parseInt(to_dates[1]), Integer.parseInt(to_dates[0]), Integer.parseInt(to_time[0]), Integer.parseInt(to_time[1]), Integer.parseInt(to_time[2]));
+		        	
+		        		Calendar today=Calendar.getInstance();
+		    			Log.i("dates", "\nfrom date: "+from.getTime()+ "\nto date: "+to.getTime()+ "\ntoday date: "+today.getTime());
+		    			
+		        		if(from.after(today))
+		        		{
+		        			System.out.println("inside Inactive");
+		        			dealInfo.setStatus("Inactive");
+		        			
+		        		}
+		        		else
+		        			if(to.before(today))
+		        			{
+		        				System.out.println("inside Expired");
+		        				dealInfo.setStatus("Expired");
+		        				
+		        			}
+		        			else
+		        				if((from.before(today) || from.equals(today)) && (to.after(today) || from.equals(today)))
+		        				{
+		        					System.out.println("inside Active");
+		        					dealInfo.setStatus("Active");
+		        					
+		        				}
+						
+						//--------------------------------------------------------------------------------------------------------------------------
+						
+				    	
+				    	database.open();
+						database.dealinfo_updateEntry(dealInfo);
+						database.close();
+				    }
+			    }			    
+			    else
+			    {
+			    	
+			    	//new
+					
+					database.open();
+					Cursor c = database.dealinfo_getShopName(uname);
+					database.close();
+					
+					shopname = c.getString(0);
+					
+					dealInfo=new DealInfo();
+					dealInfo.setShopName(shopname);
+					dealInfo.setBrandName(brand.getText().toString().toUpperCase());
+					dealInfo.setDescription(desc.getText().toString());
+					dealInfo.setFromDate(fromDate);
+					dealInfo.setToDate(toDate);
+					dealInfo.setCategory(cat.getSelectedItem().toString());
+					dealInfo.setFromTime(ftime);
+					dealInfo.setToTime(ttime);
+					
+					
+					//--------------------------------------------------------------------------------------------------------------------------
+					
+					String[] from_dates=fromDate.split("-");
+	        		String[] from_time=ftime.split("-");
+	        		
+	        		Calendar from=Calendar.getInstance();
+	        		//set takes year,month,date,hour,min,sec as parameter
+	        		from.set(Integer.parseInt(from_dates[2]), Integer.parseInt(from_dates[1]), Integer.parseInt(from_dates[0]), Integer.parseInt(from_time[0]), Integer.parseInt(from_time[1]), Integer.parseInt(from_time[2]));
+	        	
+	        		String[] to_dates=toDate.split("-");
+	        		String[] to_time=ttime.split("-");
+	        		
+	        		Calendar to=Calendar.getInstance();
+	        		//set takes year,month,date,hour,min,sec as parameter
+	        		to.set(Integer.parseInt(to_dates[2]), Integer.parseInt(to_dates[1]), Integer.parseInt(to_dates[0]), Integer.parseInt(to_time[0]), Integer.parseInt(to_time[1]), Integer.parseInt(to_time[2]));
+	        	
+	        		Calendar today=Calendar.getInstance();
+	    			Log.i("dates", "\nfrom date: "+from.getTime()+ "\nto date: "+to.getTime()+ "\ntoday date: "+today.getTime());
+	    			
+	        		if(from.after(today))
+	        		{
+	        			System.out.println("inside Inactive");
+	        			dealInfo.setStatus("Inactive");
+	        			
+	        		}
+	        		else
+	        			if(to.before(today))
+	        			{
+	        				System.out.println("inside Expired");
+	        				dealInfo.setStatus("Expired");
+	        				
+	        			}
+	        			else
+	        				if((from.before(today) || from.equals(today)) && (to.after(today) || from.equals(today)))
+	        				{
+	        					System.out.println("inside Active");
+	        					dealInfo.setStatus("Active");
+	        					
+	        				}
+					
+					//--------------------------------------------------------------------------------------------------------------------------
+					
+			    	
+			    	database.open();
+					database.dealinfo_insertEntry(dealInfo);
+					database.close();
+					//-------------------
+			    }
+				
+				
+				
+				
+				
+				Intent i1=new Intent(getApplicationContext(),DealerDeal.class);
+				i1.putExtra("username", uname);
+				startActivity(i1);
+				finish();
+			}
+				
+				
+			}		
+		});
+       /* public void onDateDialogButtonClick(View v) {   
+        	showDialog(MY_DATE_DIALOG_ID); }*/
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_post_deals, menu);
+        return true;
+    }
+
+    /*@Override
+    protected void onPause() {
+    	// TODO Auto-generated method stub
+    	super.onPause();
+    	finish();
+    }*/
+    
+    @Override
+    protected void onStop() {
+    	// TODO Auto-generated method stub
+    	super.onStop();
+    	finish();
+    }
+    
+}

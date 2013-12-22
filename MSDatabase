@@ -1,0 +1,548 @@
+package com.example.bigdeal;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.util.Log;
+import android.widget.Toast;
+
+public class MSdatabase {
+                private static final String DB_NAME = "dealsdb";
+                private static final String DB_TABLE1 = "signup";
+                private static final int DB_VERSION =40;
+                public static final String COL1_USERNAME = "username";
+                public static final String COL2_PASSWORD = "password";
+                public static final String COL3_SECURITYQ = "securityq";
+                public static final String COL4_ANSWER = "answer";
+                public static final String COL5_EMAILID = "emailid";
+                public static final String COL6_SHOPNAME = "shopname";
+                public static final String COL7_ADDRESS = "address";
+                public static final String COL8_CITY = "city";
+                public static final String COL9_STATE = "state";
+                public static final String COL10_NOOFLIKES = "nooflikes";
+                public static final int FIRST_COL_INDEX = 1;
+                
+                private static final String CREATE_DB = 
+                                "CREATE TABLE " + DB_TABLE1 + "( "    
++ COL1_USERNAME   + " text primary key" + "," 
++ COL2_PASSWORD +" text not null"+ ","
++ COL3_SECURITYQ +" text not null"+ ","  
++ COL4_ANSWER + " text not null" + "," 
++ COL5_EMAILID + " text not null" + "," 
++ COL6_SHOPNAME + " text not null" + ","
++ COL7_ADDRESS +" text not null"+ "," 
++ COL8_CITY +" text not null"+ "," 
++ COL9_STATE +" text not null"+ ","  
++ COL10_NOOFLIKES +" integer );";
+
+                private static final String DB_TABLE2 = "dealinfo";
+                public static final String KEY_ID2 = "_id2";
+                public static final String COL1_SHOPNAME = "shopname";
+                public static final String COL2_CATEGORY = "category";
+                public static final String COL3_BRANDNAME = "brandname";
+                public static final String COL4_DESCRIPTION = "description";
+                public static final String COL5_FROMDATE = "fromdate";
+                public static final String COL6_TODATE = "todate";
+                public static final String COL7_FROMTIME = "fromtime";
+                public static final String COL8_TOTIME = "totime";
+                public static final String COL9_STATUS = "status";
+                
+                private static final String CREATE_DB1 = 
+                                "CREATE TABLE " + DB_TABLE2 + "( "   
++ KEY_ID2 + " integer primary key autoincrement" + ", " 
++ COL1_SHOPNAME   + " text not null" + "," 
++ COL2_CATEGORY +" text not null"+ ","
++ COL3_BRANDNAME +" text not null"+ ","  
++ COL4_DESCRIPTION + " text not null" + "," 
++ COL5_FROMDATE + " text not null" + "," 
++ COL6_TODATE + " text not null" + ","
++ COL7_FROMTIME +" text not null"+ "," 
++ COL8_TOTIME +" text not null"+ "," 
++ COL9_STATUS +" text not null );";
+                
+                private static SQLiteDatabase db; 
+                private Context context;
+                private MyDBHelper dbHelper;
+                
+                public MSdatabase(Context context) 
+                {  
+                                this.context = context;  
+                                this.dbHelper = new MyDBHelper(this.context, DB_NAME, null, DB_VERSION);
+                                
+                }
+                
+                                
+                
+                public MSdatabase open() throws SQLException 
+                {  
+                                db = dbHelper.getWritableDatabase();
+                                return this; 
+                                
+                }
+                public void close() 
+                {  
+                                db.close(); 
+                                
+                }
+                
+                private static class MyDBHelper extends SQLiteOpenHelper{
+                                public MyDBHelper(Context context, String name, CursorFactory factory,
+                                                                int version) {
+                                                super(context, name, factory, version);
+                                                // TODO Auto-generated constructor stub
+                                }
+                                
+
+                                @Override
+                                public void onCreate(SQLiteDatabase _db) 
+                                {
+                                                // TODO Auto-generated method stub
+                                                _db.execSQL(CREATE_DB);
+                                                _db.execSQL(CREATE_DB1);
+                                                
+                                                
+                                                //change
+                                                ContentValues values3 = new ContentValues();
+                                                values3.put(COL1_USERNAME, "user1");
+                                                values3.put(COL2_PASSWORD, "pass1");
+                                                values3.put(COL3_SECURITYQ, "ques1");
+                                                values3.put(COL4_ANSWER, "ans1");
+                                                values3.put(COL5_EMAILID, "email1");
+                                                values3.put(COL6_SHOPNAME, "ABC");
+                                                values3.put(COL7_ADDRESS, "add1");
+                                                values3.put(COL8_CITY, "city1");
+                                                values3.put(COL9_STATE, "state1");
+                                                values3.put(COL10_NOOFLIKES, 2);
+                                               
+                                                _db.insert(DB_TABLE1, null, values3);
+                                                
+                                                ContentValues values4 = new ContentValues();
+                                                values4.put(COL1_USERNAME, "user2");
+                                                values4.put(COL2_PASSWORD, "pass2");
+                                                values4.put(COL3_SECURITYQ, "ques2");
+                                                values4.put(COL4_ANSWER, "ans2");
+                                                values4.put(COL5_EMAILID, "email2");
+                                                values4.put(COL6_SHOPNAME, "DEF");
+                                                values4.put(COL7_ADDRESS, "add2");
+                                                values4.put(COL8_CITY, "city1");
+                                                values4.put(COL9_STATE, "state2");
+                                                values4.put(COL10_NOOFLIKES, 4);
+                                               
+                                                _db.insert(DB_TABLE1, null, values4);
+                                                
+                                                ContentValues values5 = new ContentValues();
+                                                values5.put(COL1_USERNAME, "user3");
+                                                values5.put(COL2_PASSWORD, "pass3");
+                                                values5.put(COL3_SECURITYQ, "ques3");
+                                                values5.put(COL4_ANSWER, "ans3");
+                                                values5.put(COL5_EMAILID, "email3");
+                                                values5.put(COL6_SHOPNAME, "GHI");
+                                                values5.put(COL7_ADDRESS, "add3");
+                                                values5.put(COL8_CITY, "city3");
+                                                values5.put(COL9_STATE, "state3");
+                                                values5.put(COL10_NOOFLIKES, 6);
+                                               
+                                                _db.insert(DB_TABLE1, null, values5);
+                                                
+                                                ContentValues values = new ContentValues();
+                                                //values.put(KEY_ID2, 1);
+                                                values.put(COL1_SHOPNAME, "ABC");
+                                                values.put(COL2_CATEGORY, "Food");
+                                                values.put(COL3_BRANDNAME, "Haldiram");
+                                                values.put(COL4_DESCRIPTION, "25% extra");
+                                                values.put(COL5_FROMDATE, "18-11-2012");
+                                                values.put(COL6_TODATE, "19-11-2012");
+                                                values.put(COL7_FROMTIME, "11-01-00");
+                                                values.put(COL8_TOTIME, "4-00-00");
+                                                values.put(COL9_STATUS, "Inactive");
+                                                
+                                                _db.insert(DB_TABLE2, null, values);
+                                                
+                                                System.out.println("in datatabase onCreate");
+                                                
+                                                ContentValues values1 = new ContentValues();
+                                                //values1.put(KEY_ID2, 2);
+                                                values1.put(COL1_SHOPNAME, "DEF");
+                                                values1.put(COL2_CATEGORY, "Sports");
+                                                values1.put(COL3_BRANDNAME, "ADIDAS");
+                                                values1.put(COL4_DESCRIPTION, "Flat 40% SALE");
+                                                values1.put(COL5_FROMDATE, "14-11-2012");
+                                                values1.put(COL6_TODATE, "20-11-2012");
+                                                values1.put(COL7_FROMTIME, "18-55-00");
+                                                values1.put(COL8_TOTIME, "22-00-00");
+                                                values1.put(COL9_STATUS, "Inactive");
+                                                
+                                                _db.insert(DB_TABLE2, null, values1);
+                                                
+                                                ContentValues values2 = new ContentValues();
+                                                //values2.put(KEY_ID2, 3);
+                                                values2.put(COL1_SHOPNAME, "GHI");
+                                                values2.put(COL2_CATEGORY, "Clothes");
+                                                values2.put(COL3_BRANDNAME, "PEPE");
+                                                values2.put(COL4_DESCRIPTION, "BUY 1 GET 1 FREE");
+                                                values2.put(COL5_FROMDATE, "17-11-2012");
+                                                values2.put(COL6_TODATE, "19-11-2012");
+                                                values2.put(COL7_FROMTIME, "14-09-00");
+                                                values2.put(COL8_TOTIME, "4-00-00");
+                                                values2.put(COL9_STATUS, "Inactive");
+                                                
+                                                _db.insert(DB_TABLE2, null, values2);
+                                                
+                                               
+                                                
+                                }
+
+                                @Override
+                                public void onUpgrade(SQLiteDatabase _db, int oldVersion, int newVersion) {
+                                                // TODO Auto-generated method stub
+                                                Log.w("TaskDBAdapter", "Upgrading from version " + oldVersion + " to " + newVersion+ ", which will destroy all old data");
+                                                _db.execSQL("DROP TABLE IF EXISTS " + DB_TABLE1); 
+                                                Log.w("TaskDBAdapter", "Upgrading from version " + oldVersion + " to " + newVersion+ ", which will destroy all old data");
+                                                _db.execSQL("DROP TABLE IF EXISTS " + DB_TABLE2);
+                                                onCreate(_db);
+                                }
+                                
+                                
+                }
+                public long signup_insertEntry(SignupBean signup) 
+                {  
+                                String username=signup.getUsername();
+                                String password=signup.getPassword();
+                                String securityq=signup.getSecurity_Q();
+                                String answer=signup.getAnswer();
+                                String address=signup.getAddress();
+                                String emailid=signup.getEmail_Id();
+                                String city=signup.getCity();
+                                String state=signup.getState();
+                                int nooflikes=signup.getNoOfLikes();                                     
+                                String shopname=signup.getShopname();
+
+                                ContentValues values = new ContentValues();
+                                values.put(COL1_USERNAME, username);
+                                values.put(COL2_PASSWORD, password);
+                                values.put(COL3_SECURITYQ, securityq);
+                                values.put(COL4_ANSWER, answer);
+                                values.put(COL5_EMAILID, emailid);
+                                values.put(COL6_SHOPNAME, shopname);
+                                values.put(COL7_ADDRESS, address);
+                                values.put(COL8_CITY, city);
+                                values.put(COL9_STATE, state);
+                                values.put(COL10_NOOFLIKES, nooflikes);
+                                
+
+                
+                                return db.insert(DB_TABLE1, null, values); 
+                }
+                
+                public long dealinfo_insertEntry(DealInfo dealinfo) 
+                {  
+                                //Integer _id=dealinfo.getKey_Id2();
+                                String shopname = dealinfo.getShopName();
+                                String category=dealinfo.getCategory();
+                                String brandname=dealinfo.getBrandName();
+                                String description=dealinfo.getDescription();
+                                String fromdate=dealinfo.getFromDate();
+                                String todate=dealinfo.getToDate();
+                                String fromtime=dealinfo.getFromTime();
+                                String totime=dealinfo.getToTime();
+                                String status=dealinfo.getStatus();
+
+                                ContentValues values = new ContentValues();
+                                //values.put(KEY_ID2, _id);
+                                values.put(COL1_SHOPNAME, shopname);
+                                values.put(COL2_CATEGORY, category);
+                                values.put(COL3_BRANDNAME, brandname);
+                                values.put(COL4_DESCRIPTION, description);
+                                values.put(COL5_FROMDATE, fromdate);
+                                values.put(COL6_TODATE, todate);
+                                values.put(COL7_FROMTIME, fromtime);
+                                values.put(COL8_TOTIME, totime);
+                                values.put(COL9_STATUS, status);
+                
+                                long insert_id=db.insert(DB_TABLE2, null, values);
+                                Log.i("data", "Data is inserted at id: "+insert_id);
+                                Toast.makeText(context, "Deal successfully posted !!!", Toast.LENGTH_LONG).show();
+                                return insert_id;
+                }
+                public Cursor dealinfo_getAllEntriesforservice() 
+                {  
+                                Cursor c = db.query(DB_TABLE2, null,null, null, null, null, null);
+                                c.moveToFirst();
+                                return c; 
+                                
+                }
+                
+                //new 
+                public Cursor signup_getAllEntries() 
+                {  
+                                Cursor c = db.query(DB_TABLE1, null,null, null, null, null, null);
+                                c.moveToFirst();
+                                return c; 
+                                
+                }
+                
+                
+                                public Cursor dealinfo_getEntry(String city, String category,String status,String brandname)
+                {  if(city.equalsIgnoreCase("all")){
+                                if(category.equalsIgnoreCase("all")){
+                                                if(brandname != null ){
+                                                                
+                                                                
+                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.brandname = '" + brandname + "';", null);
+                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = '" + status + "' and " + COL3_BRANDNAME + " = '" + brandname + "' and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                tmpCursor.moveToFirst();
+                                                                return tmpCursor;
+                                                }
+                                                else{
+                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "';", null);
+                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                tmpCursor.moveToFirst();
+                                                                return tmpCursor;
+                                                }
+                                                
+                                }
+                                else{
+                                                if(brandname != null ){
+                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.category = '"+ category +"' and b.brandname= '"+brandname+"';" , null);
+                                                    //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                    tmpCursor.moveToFirst();
+                                                    return tmpCursor;
+                                                }
+                                                else{
+                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.category = '"+ category +"';", null);
+                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status+ " and " + COL2_CATEGORY + " = " + category, null, null, null,null);
+                                                                tmpCursor.moveToFirst();
+                                                                return tmpCursor;
+                                                }
+                                }
+                }
+                                else
+                                {
+                                                if(category.equalsIgnoreCase("all")){
+                                                                if(brandname != null ){
+                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and a.city = '"+ city +"' and b.brandname='"+brandname+"';", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL3_BRANDNAME + " + " + brandname + " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                                else{
+                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and a.city = '"+ city +"';", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status+ " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                                
+                                                }
+                                                else{
+                                                                if(brandname != null ){
+                                                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.brandname='"+brandname + "' and a.city='"+ city +"' and b.category='"+category+"';", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL3_BRANDNAME + " + " + brandname + " and " + COL2_CATEGORY + " = " + category + " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                                else{
+                                                                                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and a.city = '"+ city +"' and b.category='"+ category +"';", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status+ " and " + COL2_CATEGORY + " = " + category+ " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                }
+                                }
+                }
+
+                //new
+                public Cursor dealinfo_viewpastdeals(String shopname,String status){
+                                Cursor c = db.query(DB_TABLE2, null ,COL1_SHOPNAME + " = '" + shopname+"' and "+COL9_STATUS+"='"+status+"'", null, null, null, null);
+                                c.moveToFirst();
+                                return c; 
+                }
+                //new
+                public Cursor dealinfo_getShopName(String username)
+                {
+                	 Cursor c = db.query(DB_TABLE1, new String[]{COL6_SHOPNAME} ,COL1_USERNAME + " = '" + username+"'", null, null, null, null);
+                     c.moveToFirst();
+                     return c; 
+                }
+
+                
+                public boolean dealinfo_updateEntry(DealInfo dealinfo) 
+                {
+                                Integer _id=dealinfo.getKey_Id2();
+                                String fromdate=dealinfo.getFromDate();
+                                String todate=dealinfo.getToDate();
+                                String fromtime=dealinfo.getFromTime();
+                                String totime=dealinfo.getToTime();
+                                String status=dealinfo.getStatus();
+                                
+                                
+                ContentValues values = new ContentValues();
+                values.put(KEY_ID2, _id);
+                values.put(COL5_FROMDATE, fromdate);
+                values.put(COL6_TODATE, todate);
+                values.put(COL7_FROMTIME, fromtime);
+                values.put(COL8_TOTIME, totime);
+                values.put(COL9_STATUS, status);
+                 int updated_id=db.update(DB_TABLE2, values, KEY_ID2 + " = " + _id,    null);
+                 Log.i("data", _id+" rows updated");
+                 Toast.makeText(context, "Deal successfully updated !!!", Toast.LENGTH_LONG).show();
+                return  updated_id> 0;
+                }
+                public boolean dealinfo_updatestatus(DealInfo dealinfo){
+                                Integer _id=dealinfo.getKey_Id2();
+                                String status=dealinfo.getStatus();
+                                ContentValues values= new ContentValues();
+                                values.put(KEY_ID2, _id);
+                                values.put(COL9_STATUS, status);
+                                
+                                return db.update(DB_TABLE2, values, KEY_ID2 + " = " + _id,    null) > 0;
+                }
+                
+                //new
+                public boolean dealinfo_updatepopularity(String shopname, int likes){
+                                
+                                ContentValues values=new ContentValues();
+                                //values.put(COL1_USERNAME, username);
+                                values.put(COL10_NOOFLIKES, likes);
+                                
+                                return db.update(DB_TABLE1, values, COL6_SHOPNAME + " = '" + shopname+"'",    null) > 0;
+                }
+                //---------------------
+
+                public Boolean signup_login(String username1, String password1){
+                                
+                                /*Cursor c = db.query(DB_TABLE1,null,COL1_USERNAME + " = " + username + " and " + COL2_PASSWORD + " = " + password, null, null, null, null);*/
+                               Cursor c=db.rawQuery("Select * from signup where username='"+username1+"';", null);
+                                
+                	/*Cursor c = db.query(DB_TABLE1,null,COL1_USERNAME + " = " + username1 , null, null, null, null);*/
+                	
+                	
+                                if(c.getCount()!=0)
+                                {
+                                	c.moveToFirst();
+                                	Log.i("data", "cursor not null");
+                                	
+                                	Log.i("data",c.getCount()+"");
+                                		Log.i("data", "cursor not empty");
+                                		Log.i("data", c.getColumnCount()+"");
+                                		Log.i("data",c.getString(0));
+                                	
+                                	
+                                	String pass=c.getString(1);
+                                	if(pass.equals(password1))
+                                	{
+                                		Log.i("data", "Inside password matches");
+                                		return true;
+                                	}
+                                	    
+                                	else
+                                	{
+                                		Log.i("data", "Inside password does not match");
+                                		return false;
+                                	}
+                                		
+                                }
+                                else
+                                {
+                                	Log.i("data", "Cursor null");
+                            		
+                                	return false;
+                                }
+                }
+                
+   //new_Akshay
+                
+                public Cursor dealinfo_getEntry_sort(String city, String category,String status,String brandname)
+                {  if(city.equalsIgnoreCase("all")){
+                                if(category.equalsIgnoreCase("all")){
+                                                if(brandname != null ){
+                                                                
+                                                                
+                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.brandname = '" + brandname + "' ORDER BY a.nooflikes DESC;", null);
+                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = '" + status + "' and " + COL3_BRANDNAME + " = '" + brandname + "' and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                tmpCursor.moveToFirst();
+                                                                return tmpCursor;
+                                                }
+                                                else{
+                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' ORDER BY a.nooflikes DESC;", null);
+                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                tmpCursor.moveToFirst();
+                                                                return tmpCursor;
+                                                }
+                                                
+                                }
+                                else{
+                                                if(brandname != null ){
+                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.category = '"+ category +"' and b.brandname= '"+brandname+"' ORDER BY a.nooflikes DESC;" , null);
+                                                    //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                    tmpCursor.moveToFirst();
+                                                    return tmpCursor;
+                                                }
+                                                else{
+                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.category = '"+ category +"' ORDER BY a.nooflikes DESC;", null);
+                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status+ " and " + COL2_CATEGORY + " = " + category, null, null, null,null);
+                                                                tmpCursor.moveToFirst();
+                                                                return tmpCursor;
+                                                }
+                                }
+                }
+                                else
+                                {
+                                                if(category.equalsIgnoreCase("all")){
+                                                                if(brandname != null ){
+                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and a.city = '"+ city +"' and b.brandname='"+brandname+"' ORDER BY a.nooflikes DESC;", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL3_BRANDNAME + " + " + brandname + " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                                else{
+                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and a.city = '"+ city +"' ORDER BY a.nooflikes DESC;", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status+ " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                                
+                                                }
+                                                else{
+                                                                if(brandname != null ){
+                                                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and b.brandname='"+brandname + "' and a.city='"+ city +"' and b.category='"+category+"' ORDER BY a.nooflikes DESC;", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status + " and " + COL3_BRANDNAME + " + " + brandname + " and " + COL2_CATEGORY + " = " + category + " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                                else{
+                                                                                                                                                                                                Cursor tmpCursor=db.rawQuery("SELECT b.shopname,b.category,b.brandname,b.description,b.fromdate,b.todate,b.fromtime,b.totime,b.status,a.address,a.nooflikes FROM signup a INNER JOIN dealinfo b ON a.shopname=b.shopname WHERE b.status = '" + status + "' and a.city = '"+ city +"' and b.category='"+ category +"' ORDER BY a.nooflikes DESC;", null);
+                                                                                //Cursor tmpCursor = db.query(DB_TABLE1 + " INNER JOIN " + DB_TABLE2, new String[] { COL1_SHOPNAME, COL2_CATEGORY, COL3_BRANDNAME, COL4_DESCRIPTION, COL5_FROMDATE, COL6_TODATE, COL7_FROMTIME, COL8_TOTIME, COL9_STATUS}, COL9_STATUS + " = " + status+ " and " + COL2_CATEGORY + " = " + category+ " and " + COL8_CITY + " = " + city + " and " + COL1_SHOPNAME + " = " + COL6_SHOPNAME, null, null, null,null);
+                                                                                tmpCursor.moveToFirst();
+                                                                                return tmpCursor;
+                                                                }
+                                                }
+                                }
+                }
+
+
+
+				public Cursor signup_getAllEntries_distinct_city() 
+				{
+					// TODO Auto-generated method stub
+					 Cursor c = db.query(true,DB_TABLE1, null,null, null,COL8_CITY, null, null, null);
+                     c.moveToFirst();
+                     return c; 
+					
+				}
+
+
+
+				public Cursor dealinfo_getAllEntriesforservice_distinct_category()
+				{
+					// TODO Auto-generated method stub
+					 Cursor c = db.query(true,DB_TABLE2, null,null, null,COL2_CATEGORY, null, null, null);
+                     c.moveToFirst();
+                     return c; 
+				}
+
+
+}

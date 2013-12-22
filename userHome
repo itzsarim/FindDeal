@@ -1,0 +1,180 @@
+package com.example.bigdeal;
+
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+
+public class userHome extends Activity 
+{
+	private MSdatabase database;
+	private String[] city_arr;
+	String[] cat_spin;
+	Spinner cat;
+	Spinner city;
+	private int flagLocate=0;
+	private String location;
+	
+	/*private String[] cat_arr;*/
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_home);
+        
+        cat=(Spinner)findViewById(R.id.spinner1);
+        city=(Spinner)findViewById(R.id.spinner2);
+       /* final Spinner cat=(Spinner)findViewById(R.id.spinner1);
+        final Spinner city=(Spinner)findViewById(R.id.spinner2);
+        */
+        Button locate=(Button)findViewById(R.id.button2);
+        
+        Button findDeals=(Button)findViewById(R.id.button1);
+        
+       
+       
+        updateUI();
+        
+       /* <CharSequence> adapter =ArrayAdapter.createFromResource(this, R.array.Category, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter1 =ArrayAdapter.createFromResource(this, R.array.City, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        adapter1.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);*/
+        
+        
+        locate.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				setLocation();
+			}
+
+			private void setLocation() {
+				// TODO Auto-generated method stub
+				flagLocate=1;
+				location="city1";
+				updateUI();
+			}
+		});
+        
+      
+       
+        
+        findDeals.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				
+				String city_selected = city.getSelectedItem().toString();
+				String cat_selected=cat.getSelectedItem().toString();
+				
+				Log.i("check", "city selected: "+city_selected+" category selected: "+cat_selected);
+				
+				
+				Intent in1=new Intent(userHome.this,deals.class);
+				in1.putExtra("deal_flag", "from_userHome");
+				in1.putExtra("city", city_selected);
+				in1.putExtra("category", cat_selected);
+				startActivity(in1);
+				
+				
+			}
+		});
+        
+      
+        
+        
+    }
+    
+    
+    public void updateUI()
+    {
+    	
+    	 database=new MSdatabase(getApplicationContext());
+         database.open();
+         Cursor city_list=database.signup_getAllEntries_distinct_city();
+         if(city_list.getCount()!=0)
+         {
+         	if(city_list.moveToFirst())
+         	{
+         		
+ 				if(flagLocate==0)
+         		{
+         		city_arr=new String[city_list.getCount()+1];
+         		city_arr[0]="All";
+         		}
+         		/*else
+         		{
+         			city_arr=new String[city_list.getCount()+1];
+         			city_arr[0]=location;
+             		//city_arr[1]="All";
+         		}*/
+         		int i=1;
+         		do
+         		{
+         			
+         			city_arr[i++]=city_list.getString(7);
+         		}
+         		while(city_list.moveToNext());
+         	}
+         } 
+         database.close();
+   
+         final String[] cat_res = getResources().getStringArray(R.array.Category);
+         cat_spin=new String[cat_res.length+1];
+         cat_spin[0]="All";
+         for(int i=0;i<cat_res.length;i++)
+         {
+         	cat_spin[i+1]=cat_res[i];
+         }
+    	
+         
+         
+         
+         
+    	
+    	
+    	     ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                 android.R.layout.simple_spinner_dropdown_item,
+                     city_arr);
+             city.setAdapter(adapter);
+             
+             
+             ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(this,
+                     android.R.layout.simple_spinner_dropdown_item,
+                         cat_spin);
+             cat.setAdapter(adapter1);
+             
+             if(flagLocate==1)
+             {
+             
+             String myString = location; //the value you want the position for
+
+             ArrayAdapter myAdap = (ArrayAdapter) city.getAdapter(); //cast to an ArrayAdapter
+
+             int spinnerPosition = myAdap.getPosition(myString);
+
+             //set the default according to value
+             city.setSelection(spinnerPosition);
+             
+             }
+    }
+    
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_user_home, menu);
+        return true;
+    }
+
+    
+}

@@ -1,0 +1,46 @@
+<resources>
+
+    <string name="app_name">BigDeal</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_section2">I M Dealer</string>
+    <string name="title_section1">I M User</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_user_deal">UserDeal</string>
+    <string name="title_activity_deal_description">DealDescription</string>
+    <string name="title_activity_sign_up">SignUp</string>
+    <string name="title_activity_dealer_deal">DealerDeal</string>
+    <string name="title_activity_refresh_service">RefreshService</string>
+    <string name="title_activity_msdatabase">MSdatabase</string>
+    <string name="title_activity_main_activity1">MainActivity1</string>
+    <string name="title_activity_user_home">userHome</string>
+    <string name="title_activity_dealer_home">dealerHome</string>
+
+    <string-array name="City">
+        <item>All</item>
+        <item>Mumbai</item>
+        <item>Delhi</item>
+    </string-array>
+    <string-array name="Category">
+        <item>Food</item>
+        <item>Sports</item>
+        <item>Clothes</item>
+        <item>Others</item>
+    </string-array>
+
+    <string name="title_activity_view_past_deals">viewPastDeals</string>
+    <string name="title_activity_post_deals">postDeals</string>
+
+    <string-array name="Questions">
+        <item>What is my pets name?</item>
+        <item>What is my mothers maiden name?</item>
+        <item>Which is my first car?</item>
+        <item>Where was I born?</item>
+    </string-array>
+
+    <string name="title_activity_deals">deals</string>
+    <string name="title_activity_my_adpater">MyAdpater</string>
+    <string name="search_hint">Search by brand</string>
+
+</resources>

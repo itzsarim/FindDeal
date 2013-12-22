@@ -1,0 +1,29 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="AppTheme" parent="android:Theme.Light" />
+      <color name="custom_theme_color">#3F9BBF</color>
+      
+<style name="CustomTheme" parent="android:Theme.Light">
+    
+    
+    <item name="android:fontFamily"></item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/custom_theme_color</item>
+    <item name="android:tabWidgetStyle">@android:style/Widget.TabWidget</item> 
+    
+</style>
+
+
+ <style name="Widget.TabWidget" parent="android:Theme.Light">
+  <item name="android:textAppearance">@style/TextAppearance.Widget.TabWidget</item> 
+  <item name="android:ellipsize">marquee</item> 
+  <item name="android:singleLine">true</item> 
+  </style>
+ <style name="TextAppearance.Widget.TabWidget" parent="android:Theme.Light">
+  <item name="android:textSize">14sp</item> 
+  <item name="android:textStyle">normal</item> 
+  <item name="android:textColor">@android:color/tab_indicator_text</item> 
+  </style>
+
+
+</resources>

@@ -1,0 +1,154 @@
+/*package com.example.bigdeal;
+
+
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class DealInfoActivity extends Activity 
+{
+    // private String[] mThumbIds={"40% off", "Buy 1 Get 1 free","60% off", "Buy 2 Get 1 free","20% off", "Buy 2 Get 3 free","10% off", "Buy 2 Get 2 free"};
+	static int i;
+	   
+    public void onCreate(Bundle savedInstanceState)
+    {
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.display);
+	    
+	    TextView brand = (TextView)findViewById(R.id.brand);
+	    TextView descr = (TextView)findViewById(R.id.description);
+	    TextView addr = (TextView)findViewById(R.id.address);
+	    final TextView nooflikes = (TextView)findViewById(R.id.nooflikes);
+	    
+	    
+	    
+	    final Bundle extra=getIntent().getExtras();
+
+	    if(extra != null)
+	    {
+	    	brand.setText(extra.getString("brand"));
+	    	descr.setText(extra.getString("descr"));
+	    	addr.setText(extra.getString("address"));
+	    	nooflikes.setText(Integer.toString(extra.getInt("nooflikes")));	    	
+	    }
+	    
+	    i = extra.getInt("nooflikes"); 
+	    
+       ImageButton like = (ImageButton)findViewById(R.id.imageButton1);
+        
+        like.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) 
+			{
+			 Toast.makeText(DealInfoActivity.this,"You like this deal",Toast.LENGTH_LONG).show();
+			 i++;
+			 String no =  Integer.toString(i);
+			 nooflikes.setText(no);             
+			}});
+
+	  	
+	} 
+	
+}*/
+
+package com.example.bigdeal;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class DealInfoActivity extends Activity 
+{
+    // private String[] mThumbIds={"40% off", "Buy 1 Get 1 free","60% off", "Buy 2 Get 1 free","20% off", "Buy 2 Get 3 free","10% off", "Buy 2 Get 2 free"};
+	static int i;
+	
+	
+	//new
+	MSdatabase database;
+	String shop1;
+	//----------------
+	
+	
+	
+	   
+    public void onCreate(Bundle savedInstanceState)
+    {
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.describe_deal);
+	    
+	    database=new MSdatabase(getApplicationContext());
+	    TextView brand = (TextView)findViewById(R.id.brand);
+	    TextView descr = (TextView)findViewById(R.id.description);
+	    TextView addr = (TextView)findViewById(R.id.address);
+	    final ImageButton like = (ImageButton)findViewById(R.id.imageButton1);
+	    
+	    
+	    
+	    //new
+	    TextView shop = (TextView)findViewById(R.id.shop);
+	    TextView from = (TextView)findViewById(R.id.from);
+	    TextView to = (TextView)findViewById(R.id.till);
+	    like.setClickable(true);
+	    //---------------
+	    
+	    
+	    final TextView statement_like = (TextView)findViewById(R.id.textView2);
+	    
+	    
+	    
+	    final Bundle extra=getIntent().getExtras();
+
+	    if(extra != null)
+	    {
+	    	brand.setText(extra.getString("brand"));
+	    	descr.setText(extra.getString("descr"));
+	    	addr.setText(extra.getString("address"));
+	    	
+	    	
+	    	
+	    	//new
+	    	shop.setText(extra.getString("shopname"));
+	    	from.setText(extra.getString("from"));
+	    	to.setText(extra.getString("till"));
+	    	shop1 = extra.getString("shopname");
+	    	i = extra.getInt("nooflikes");
+	    	//--------------
+	    	
+	    	
+	    	statement_like.setText(i+" people like this");	    	
+	    }
+	    
+       
+        
+        like.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) 
+			{
+			 Toast.makeText(DealInfoActivity.this,"You like this deal",Toast.LENGTH_LONG).show();
+			 i++;
+			 statement_like.setText(i+" people like this");
+			 database.open();
+			 database.dealinfo_updatepopularity(shop1, i);
+			 database.close();
+			 
+			 //new
+			 like.setClickable(false);
+			 //--------------
+			 
+			}});
+
+	  	
+	} 
+	
+}
